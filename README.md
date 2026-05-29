@@ -34,6 +34,20 @@ The output is native ComfyUI image tensor data, so it can connect directly to bu
 
 ---
 
+## Examples
+
+These example images are generated from real ComfyUI runs and are sanitized for GitHub, so they do not include API key screenshots.
+
+### `Nanaix_Image`: Multi-Reference Image Editing
+
+![Nanaix_Image multi-reference image editing example](assets/examples/nanaix-image-example.jpg)
+
+### `Nanaix_Text`: Text-to-Image Across Supported Model Families
+
+![Nanaix_Text text-to-image examples](assets/examples/nanaix-text-example.jpg)
+
+---
+
 ## Supported Models
 
 The node routes requests by model name prefix:
@@ -560,6 +574,20 @@ nanaix_Comfy/
 - 失败运行不会覆盖上一次成功的配置。
 - 缺密钥、缺参考图、密钥错误、账号组不支持图片、上游账号不可用、请求超时等情况都会返回更具体的错误信息。
 - Banana 模型使用异步任务流程：先 `POST /api/generate` 提交，再 `GET /api/result?id=task-id` 查询结果。
+
+---
+
+## 示例图
+
+下面两张图来自真实 ComfyUI 运行结果，并且已经做成适合 GitHub 展示的安全版本，不包含 API key 截图。
+
+### `Nanaix_Image`：多参考图图生图示例
+
+![Nanaix_Image 多参考图图生图示例](assets/examples/nanaix-image-example.jpg)
+
+### `Nanaix_Text`：文生图多模型示例
+
+![Nanaix_Text 文生图示例](assets/examples/nanaix-text-example.jpg)
 
 ---
 
