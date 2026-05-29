@@ -40,11 +40,11 @@ These example images are generated from real ComfyUI runs and are sanitized for 
 
 ### `Nanaix_Image`: Multi-Reference Image Editing
 
-![Nanaix_Image multi-reference image editing example](assets/examples/nanaix-image-example.jpg)
+![Nanaix_Image multi-reference image editing example](assets/examples/图生图.png)
 
 ### `Nanaix_Text`: Text-to-Image Across Supported Model Families
 
-![Nanaix_Text text-to-image examples](assets/examples/nanaix-text-example.jpg)
+![Nanaix_Text text-to-image examples](assets/examples/文生图.png)
 
 ---
 
