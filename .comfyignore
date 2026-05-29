@@ -1,0 +1,6 @@
+docs/
+tests/
+.pytest_cache/
+.hypothesis/
+__pycache__/
+*.pyc

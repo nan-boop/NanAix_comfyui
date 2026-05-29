@@ -1,0 +1,88 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 3,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "Nanaix_Text",
+      "pos": [120, 120],
+      "size": [340, 420],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [1]
+        }
+      ],
+      "properties": {},
+      "widgets_values": [
+        "A red lantern on a rainy street",
+        "gpt-image-2",
+        "custom",
+        1024,
+        1024,
+        1,
+        "high",
+        "png",
+        "auto",
+        "natural",
+        "auto",
+        0,
+        0,
+        false,
+        ""
+      ]
+    },
+    {
+      "id": 2,
+      "type": "PreviewImage",
+      "pos": [520, 120],
+      "size": [300, 260],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [],
+      "properties": {}
+    },
+    {
+      "id": 3,
+      "type": "SaveImage",
+      "pos": [520, 420],
+      "size": [320, 80],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "nanaix_text_example"
+      ]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "IMAGE"],
+    [2, 1, 0, 3, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

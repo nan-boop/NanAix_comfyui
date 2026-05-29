@@ -1,0 +1,24 @@
+[project]
+name = "nanaix-image-nodes"
+version = "0.1.0"
+description = "Nanaix image generation and editing nodes for ComfyUI"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Repository = "https://github.com/nan-boop/NanAix_comfyui"
+Homepage = "https://ai.nanaix.com"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+# Before publishing to the Comfy Registry, fill in:
+# PublisherId = "<your-publisher-id>"
+
+[tool.comfy]
+DisplayName = "Nanaix Image Nodes"
+requires-comfyui = ">=0.0.1"
