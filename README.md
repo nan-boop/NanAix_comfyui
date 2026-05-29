@@ -40,7 +40,7 @@ These example images are generated from real ComfyUI runs and are sanitized for 
 
 ### `Nanaix_Image`: Multi-Reference Image Editing
 
-![Nanaix_Image multi-reference image editing example](assets/examples/图生图.png)
+![Nanaix_Image multi-reference image editing example](assets/examples/图生图.png.png)
 
 ### `Nanaix_Text`: Text-to-Image Across Supported Model Families
 
@@ -583,11 +583,11 @@ nanaix_Comfy/
 
 ### `Nanaix_Image`：多参考图图生图示例
 
-![Nanaix_Image 多参考图图生图示例](assets/examples/nanaix-image-example.jpg)
+![Nanaix_Image 多参考图图生图示例](assets/examples/图生图.png.png)
 
 ### `Nanaix_Text`：文生图多模型示例
 
-![Nanaix_Text 文生图示例](assets/examples/nanaix-text-example.jpg)
+![Nanaix_Text 文生图示例](assets/examples/文生图.png)
 
 ---
 
