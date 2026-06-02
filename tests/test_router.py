@@ -128,6 +128,55 @@ def test_router_warns_when_banana_ignores_image2_only_options() -> None:
     assert not image2.calls
 
 
+def test_router_creates_clients_with_current_api_key_for_each_call() -> None:
+    image2_keys: list[str] = []
+    banana_keys: list[str] = []
+    image2 = RecordingImage2Client()
+    banana = RecordingBananaClient()
+    router = NanaixRouter(
+        image2_client_factory=lambda api_key: image2_keys.append(api_key) or image2,
+        banana_client_factory=lambda api_key: banana_keys.append(api_key) or banana,
+    )
+
+    router.run_text(
+        prompt="banana first",
+        model="nano-banana-2",
+        width=1024,
+        height=1024,
+        n=1,
+        quality="high",
+        output_format="png",
+        background="auto",
+        style="natural",
+        moderation="auto",
+        output_compression=0,
+        partial_images=0,
+        stream=False,
+        api_key="banana-key",
+    )
+    router.run_text(
+        prompt="image2 second",
+        model="gpt-image-2",
+        width=1024,
+        height=1024,
+        n=1,
+        quality="high",
+        output_format="png",
+        background="auto",
+        style="natural",
+        moderation="auto",
+        output_compression=0,
+        partial_images=0,
+        stream=False,
+        api_key="image-key",
+    )
+
+    assert banana_keys == ["banana-key"]
+    assert image2_keys == ["image-key"]
+    assert banana.calls[0]["model"] == "nano-banana-2"
+    assert image2.calls[0][1]["model"] == "gpt-image-2"
+
+
 def test_router_requires_api_key_for_supported_model_family() -> None:
     router = NanaixRouter(
         image2_client_factory=lambda _: RecordingImage2Client(),

@@ -4,6 +4,7 @@ import inspect
 import json
 from pathlib import Path
 
+import pytest
 import torch
 
 from config.settings import save_config
@@ -24,6 +25,14 @@ class SuccessfulRouter(NanaixRouter):
     def run_image(self, **kwargs):  # type: ignore[override]
         self.last_payload = kwargs
         return torch.ones((2, 4, 4, 3), dtype=torch.float32)
+
+
+class FailingRouter(NanaixRouter):
+    def run_text(self, **kwargs):  # type: ignore[override]
+        raise RuntimeError("simulated generation failure")
+
+    def run_image(self, **kwargs):  # type: ignore[override]
+        raise RuntimeError("simulated generation failure")
 
 
 def text_payload(*, prompt: str = "hello", model: str = "gpt-image-2", api_key: str = "image-key") -> dict[str, object]:
@@ -190,6 +199,35 @@ def test_text_node_returns_router_image_and_saves_config(tmp_path: Path) -> None
     assert saved["model"] == "gpt-image-2"
 
 
+def test_text_node_uses_trimmed_visible_api_key_instead_of_saved_config(tmp_path: Path) -> None:
+    config_path = tmp_path / "nanaix_config.json"
+    save_config({"api_key": "banana-key", "model": "nano-banana-2"}, config_path)
+    router = SuccessfulRouter()
+    node = NanaixTextNode(router=router, config_path=config_path)
+
+    result = node.generate(**text_payload(model="gpt-image-2", api_key="  image-key  "))
+
+    assert result[0].shape == (1, 4, 4, 3)
+    assert router.last_payload["model"] == "gpt-image-2"
+    assert router.last_payload["api_key"] == "image-key"
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert saved["api_key"] == "image-key"
+    assert saved["model"] == "gpt-image-2"
+
+
+def test_text_node_does_not_save_config_when_generation_fails(tmp_path: Path) -> None:
+    config_path = tmp_path / "nanaix_config.json"
+    save_config({"api_key": "banana-key", "model": "nano-banana-2"}, config_path)
+    node = NanaixTextNode(router=FailingRouter(), config_path=config_path)
+
+    with pytest.raises(RuntimeError, match="simulated generation failure"):
+        node.generate(**text_payload(model="gpt-image-2", api_key="image-key"))
+
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert saved["api_key"] == "banana-key"
+    assert saved["model"] == "nano-banana-2"
+
+
 def test_text_node_resolution_preset_overrides_width_and_height(tmp_path: Path) -> None:
     router = SuccessfulRouter()
     node = NanaixTextNode(router=router, config_path=tmp_path / "nanaix_config.json")
@@ -257,6 +295,39 @@ def test_image_node_collects_optional_images_and_saves_config(tmp_path: Path) ->
     saved = json.loads(config_path.read_text(encoding="utf-8"))
     assert saved["api_key"] == "image-key"
     assert saved["model"] == "gpt-image-2"
+
+
+def test_image_node_uses_trimmed_visible_api_key_instead_of_saved_config(tmp_path: Path) -> None:
+    config_path = tmp_path / "nanaix_config.json"
+    save_config({"api_key": "banana-key", "model": "nano-banana-2"}, config_path)
+    router = SuccessfulRouter()
+    node = NanaixImageNode(router=router, config_path=config_path)
+    payload = image_payload(model="gpt-image-2", api_key="  image-key  ")
+    payload["image_1"] = torch.zeros((4, 4, 3), dtype=torch.float32)
+
+    result = node.generate(**payload)
+
+    assert result[0].shape == (2, 4, 4, 3)
+    assert router.last_payload["model"] == "gpt-image-2"
+    assert router.last_payload["api_key"] == "image-key"
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert saved["api_key"] == "image-key"
+    assert saved["model"] == "gpt-image-2"
+
+
+def test_image_node_does_not_save_config_when_generation_fails(tmp_path: Path) -> None:
+    config_path = tmp_path / "nanaix_config.json"
+    save_config({"api_key": "banana-key", "model": "nano-banana-2"}, config_path)
+    node = NanaixImageNode(router=FailingRouter(), config_path=config_path)
+    payload = image_payload(model="gpt-image-2", api_key="image-key")
+    payload["image_1"] = torch.zeros((4, 4, 3), dtype=torch.float32)
+
+    with pytest.raises(RuntimeError, match="simulated generation failure"):
+        node.generate(**payload)
+
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert saved["api_key"] == "banana-key"
+    assert saved["model"] == "nano-banana-2"
 
 
 def test_image_node_validate_inputs_checks_required_fields() -> None:

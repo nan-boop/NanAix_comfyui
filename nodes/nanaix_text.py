@@ -187,12 +187,14 @@ class NanaixTextNode:
         return True
 
     def generate(self, **kwargs: object) -> tuple[object]:
-        kwargs["width"], kwargs["height"] = apply_resolution_preset(
-            str(kwargs.get("resolution_preset", "custom")),
-            int(kwargs["width"]),
-            int(kwargs["height"]),
+        request_values = dict(kwargs)
+        request_values["api_key"] = str(request_values.get("api_key", "")).strip()
+        request_values["width"], request_values["height"] = apply_resolution_preset(
+            str(request_values.get("resolution_preset", "custom")),
+            int(request_values["width"]),
+            int(request_values["height"]),
         )
-        save_config(kwargs, self.config_path)
-        request_kwargs = {key: kwargs[key] for key in ROUTER_INPUT_KEYS if key in kwargs}
+        request_kwargs = {key: request_values[key] for key in ROUTER_INPUT_KEYS if key in request_values}
         image = self.router.run_text(**request_kwargs)
+        save_config(request_values, self.config_path)
         return (image,)
