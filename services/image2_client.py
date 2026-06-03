@@ -14,7 +14,7 @@ except ImportError:  # pragma: no cover - local pytest import fallback
 
 class Image2Client:
     BASE_URL = "https://api.nanaix.com/v1"
-    REQUEST_TIMEOUT_SECONDS = 300
+    REQUEST_TIMEOUT_SECONDS = 600
     REFERENCE_UPLOAD_MAX_EDGE = 1536
 
     def __init__(self, api_key: str) -> None:

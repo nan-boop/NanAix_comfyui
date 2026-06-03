@@ -338,30 +338,28 @@ def test_image2_raw_request_parses_structured_error_payload(monkeypatch) -> None
     assert "image-enabled platform group" in str(error.value)
 
 
-def test_image2_raw_request_wraps_timeout_with_actionable_message(monkeypatch) -> None:
+def test_image2_raw_request_uses_extended_generation_timeout(monkeypatch) -> None:
     client = Image2Client("image-key")
     captured: dict[str, object] = {}
 
-    def fake_urlopen(_request, timeout=0):
-        captured["timeout"] = timeout
-        raise TimeoutError("The read operation timed out")
+    def fake_urlopen(_request, **kwargs):
+        captured["kwargs"] = kwargs
+        encoded = pil_image_to_base64(Image.new("RGB", (4, 4), (255, 255, 255)))
+        return FakeResponse(json.dumps({"data": [{"b64_json": encoded}]}).encode("utf-8"))
 
     monkeypatch.setattr("services.image2_client.request.urlopen", fake_urlopen)
 
-    with pytest.raises(NanaixNodeError) as error:
-        client._raw_request(
-            "/images/edits",
-            b"{}",
-            {"Authorization": "Bearer image-key"},
-            stage="edit request",
-            node_name="Nanaix_Image",
-            model="gpt-image-2",
-        )
+    payload = client._raw_request(
+        "/images/edits",
+        b"{}",
+        {"Authorization": "Bearer image-key"},
+        stage="edit request",
+        node_name="Nanaix_Image",
+        model="gpt-image-2",
+    )
 
-    text = str(error.value)
-    assert captured["timeout"] == 300
-    assert "timed out while waiting for Nanaix" in text
-    assert "fewer or smaller reference images" in text
+    assert payload["data"]
+    assert captured["kwargs"]["timeout"] == 600
 
 
 def test_banana_status_to_tensors_requires_urls() -> None:
